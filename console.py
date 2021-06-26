@@ -11,7 +11,7 @@ from models.city import City
 from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
-import string
+import json
 import re
 from colorama import Fore, Style
 
@@ -24,7 +24,7 @@ class HBNBCommand(cmd.Cmd):
     __classes = [
         'BaseModel', 'User', 'State', 'City', 'Amenity', 'Place', 'Review'
     ]
-    __commands = ['all', 'count', 'create', 'destroy', 'show', 'update']
+    __commands = ['all', 'count', 'create', 'destroy', 'show']
 
     def do_create(self, prmArg):
         """
@@ -41,10 +41,8 @@ class HBNBCommand(cmd.Cmd):
                 raise ValueError("** class doesn't exist **")
 
             instance = eval(args[0])()
-            print(f'{Fore.CYAN}', end='')
-            print(instance.id, end='')
-            print(f'{Style.RESET_ALL}')
             storage.save()
+            self.__printCommandResult(instance.id)
         except Exception as exception:
             print("{}".format(exception.args[0]))
 
@@ -69,9 +67,7 @@ class HBNBCommand(cmd.Cmd):
             if key not in dict:
                 raise ValueError("** no instance found **")
 
-            print(f'{Fore.CYAN}', end='')
-            print(dict[key], end='')
-            print(f'{Style.RESET_ALL}')
+            self.__printCommandResult(dict[key])
         except Exception as exception:
             print("{}".format(exception.args[0]))
 
@@ -92,9 +88,7 @@ class HBNBCommand(cmd.Cmd):
                 if args[0] is None or args[0] == type(value).__name__:
                     list.append(str(value))
 
-            print(f'{Fore.CYAN}', end='')
-            print(list, end='')
-            print(f'{Style.RESET_ALL}')
+            self.__printCommandResult(list)
         except Exception as exception:
             print("{}".format(exception.args[0]))
 
@@ -183,9 +177,7 @@ class HBNBCommand(cmd.Cmd):
                 if args[0] is None or args[0] == type(value).__name__:
                     count += 1
 
-            print(f'{Fore.CYAN}', end='')
-            print(count, end='')
-            print(f'{Style.RESET_ALL}')
+            self.__printCommandResult(count)
         except Exception as exception:
             print("{}".format(exception.args[0]))
 
@@ -195,11 +187,22 @@ class HBNBCommand(cmd.Cmd):
     def do_EOF(self, arg):
         raise SystemExit
 
+    def __printCommandResult(self, prmResult: str):
+        print(f'{Fore.CYAN}', end='')
+        print(prmResult, end='')
+        print(f'{Style.RESET_ALL}')
+
+    def __printHelp(self, prmMessage: str):
+        print(f"{Fore.GREEN}", end='')
+        print(prmMessage, end='')
+        print(f"{Style.RESET_ALL}\n")
+
+
     def help_quit(self):
-        print(f"{Fore.GREEN}Quit command to exit the program{Style.RESET_ALL}\n")
+        self.__printHelp("Quit command to exit the program")
 
     def help_EOF(self):
-        print(f"{Fore.GREEN}EOF command to exit the program{Style.RESET_ALL}\n")
+        self.__printHelp("EOF command to exit the program")
 
     def help_create(self):
         pass
@@ -222,25 +225,77 @@ class HBNBCommand(cmd.Cmd):
             to verify and catch or not the adequate function.
         """
         try:
-            regex = "^(.*)\.(.*)\((.*)\)$"
-            regex_prog = re.compile(regex)
-            results = regex_prog.findall(line)
-            args = results[0]
-            if args and args[0] in self.__classes and len(args) == 3:
-                className, command, arguments = args
-                if command in self.__commands:
-                    arguments = arguments.replace(", ", " ")
-                    arguments = arguments.replace(",", " ")
-                    arguments = arguments.replace('"', "")
-                    if len(arguments) > 0:
-                        arguments = "{} {}".format(className, arguments)
-                    else:
-                        arguments = "{}".format(className)
-                    print("self.do_{}(\"{}\")".format(command, arguments))
-                    eval("self.do_{}(\"{}\")".format(command, arguments))
+            if self.__checkValidArguments(line):
+                clName, cmd, args = self.__getArgumentsFromLine(line)
+                if self.__checkValidCommand(cmd):
+                    args = self.__formatArguments(args)
+                    formattedCommand = self.__formatCommand(clName, cmd, args)
+                    eval(formattedCommand)
                     return
+                elif (cmd == 'update'):
+                    parameters = self.__getParametersFromArguments(args)
+                    id = self.__formatArguments(parameters[0])
+                    if self.__isValidJson(parameters[1]):
+                        for attribute, value in json.loads(parameters[1]).items():
+                            args = "{} {} {}".format(id, attribute, value)
+                            formattedCommand = self.__formatCommand(clName, cmd, args)
+                            eval(formattedCommand)
+                            return
+                    else:
+                        args = self.__formatArguments(args)
+                        formattedCommand = self.__formatCommand(clName, cmd, args)
+                        eval(formattedCommand)
+                        return
         except:
             return super().default(line)
+
+    def __getArgumentsFromLine(self, prmLine):
+        regex = "^(.*)\.(.*)\((.*)\)$"
+        regex_prog = re.compile(regex)
+        results = regex_prog.findall(prmLine)
+        arguments = results[0]
+
+        return arguments
+
+    def __isValidJson(self, prmString: str) -> bool:
+        try:
+            json_object = json.loads(prmString)
+        except ValueError as e:
+            return False
+        return True
+
+    def __getParametersFromArguments(self, prmArguments):
+        regex = "^(\"[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}\")\, ?(.*)$"
+        regex_prog = re.compile(regex)
+        results = regex_prog.findall(prmArguments)
+        parameters = results[0]
+
+        return parameters
+
+    def __checkValidArguments(self, prmLine: str) -> bool:
+        arguments = self.__getArgumentsFromLine(prmLine)
+
+        return (arguments and arguments[0] in self.__classes and
+                len(arguments) == 3)
+
+    def __checkValidCommand(self, prmCommand: str) -> bool:
+        return prmCommand in self.__commands
+
+    def __formatArguments(self, prmArguments) -> str:
+        prmArguments = prmArguments.replace(", ", " ")
+        prmArguments = prmArguments.replace(",", " ")
+        prmArguments = prmArguments.replace('"', "")
+
+        return prmArguments
+
+    def __formatCommand(self, prmClassName, prmCommand, prmArguments):
+        if len(prmArguments) > 0:
+            arguments = "{} {}".format(prmClassName, prmArguments)
+        else:
+            arguments = "{}".format(prmClassName)
+
+        return "self.do_{}(\"{}\")".format(prmCommand, arguments)
+
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()

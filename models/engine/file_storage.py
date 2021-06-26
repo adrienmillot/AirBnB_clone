@@ -51,6 +51,7 @@ class FileStorage:
             from models.review import Review
             with open(FileStorage.__file_path, 'r') as file:
                 for key, value in json.load(file).items():
-                    FileStorage.__objects[key] = eval(value['__class__'])(**value)
+                    className = value['__class__']
+                    FileStorage.__objects[key] = eval(className)(**value)
         except Exception:
             pass

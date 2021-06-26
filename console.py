@@ -12,14 +12,19 @@ from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
 import string
+import re
+from colorama import Fore, Style
 
 
 class HBNBCommand(cmd.Cmd):
     """
         Console
     """
-    prompt = "(hbnb) "
-    __classes = ['BaseModel', 'User', 'State', 'City', 'Amenity', 'Place', 'Review']
+    prompt = f"{Fore.BLUE}(hbnb){Style.RESET_ALL} "
+    __classes = [
+        'BaseModel', 'User', 'State', 'City', 'Amenity', 'Place', 'Review'
+    ]
+    __commands = ['all', 'count', 'create', 'destroy', 'show', 'update']
 
     def do_create(self, prmArg):
         """
@@ -27,14 +32,18 @@ class HBNBCommand(cmd.Cmd):
             and prints the id.
         """
         try:
-
             if not prmArg:
                 raise ValueError("** class name missing **")
-            if prmArg not in self.__classes:
+
+            args = prmArg.split()
+
+            if args[0] not in self.__classes:
                 raise ValueError("** class doesn't exist **")
 
-            instance = eval(prmArg)()
-            print(instance.id)
+            instance = eval(args[0])()
+            print(f'{Fore.CYAN}', end='')
+            print(instance.id, end='')
+            print(f'{Style.RESET_ALL}')
             storage.save()
         except Exception as exception:
             print("{}".format(exception.args[0]))
@@ -60,7 +69,9 @@ class HBNBCommand(cmd.Cmd):
             if key not in dict:
                 raise ValueError("** no instance found **")
 
-            print(dict[key])
+            print(f'{Fore.CYAN}', end='')
+            print(dict[key], end='')
+            print(f'{Style.RESET_ALL}')
         except Exception as exception:
             print("{}".format(exception.args[0]))
 
@@ -72,14 +83,18 @@ class HBNBCommand(cmd.Cmd):
         try:
             list = []
 
-            if prmArg is None or prmArg not in self.__classes:
+            args = prmArg.split()
+
+            if args[0] not in self.__classes:
                 raise ValueError("** class doesn't exist **")
 
             for key, value in storage.all().items():
-                if prmArg is None or prmArg == type(value).__name__:
+                if args[0] is None or args[0] == type(value).__name__:
                     list.append(str(value))
 
-            print(list)
+            print(f'{Fore.CYAN}', end='')
+            print(list, end='')
+            print(f'{Style.RESET_ALL}')
         except Exception as exception:
             print("{}".format(exception.args[0]))
 
@@ -136,9 +151,41 @@ class HBNBCommand(cmd.Cmd):
             if len(args) == 3:
                 raise ValueError("** value missing **")
 
-            if args[2] not in ("id", "created_at", "updated_at"):
-                setattr(obj, args[2], args[3][1:-1])
+            className, command, attribute, value = args
+
+            if value[0] != '"':
+                value = '"' + value
+            if value[-1] != '"':
+                value = value + '"'
+
+            if attribute not in ("id", "created_at", "updated_at"):
+                setattr(obj, attribute, value[1:-1])
                 storage.save()
+        except Exception as exception:
+            print("{}".format(exception.args[0]))
+
+    def do_count(self, prmArg):
+        """
+            Update your command interpreter (console.py) to retrieve the number
+            of instances of a class.
+        """
+        try:
+            count = 0
+            if not prmArg:
+                raise ValueError("** class name missing **")
+
+            args = prmArg.split()
+
+            if args[0] not in self.__classes:
+                raise ValueError("** class doesn't exist **")
+
+            for key, value in storage.all().items():
+                if args[0] is None or args[0] == type(value).__name__:
+                    count += 1
+
+            print(f'{Fore.CYAN}', end='')
+            print(count, end='')
+            print(f'{Style.RESET_ALL}')
         except Exception as exception:
             print("{}".format(exception.args[0]))
 
@@ -149,10 +196,10 @@ class HBNBCommand(cmd.Cmd):
         raise SystemExit
 
     def help_quit(self):
-        print("Quit command to exit the program\n")
+        print(f"{Fore.GREEN}Quit command to exit the program{Style.RESET_ALL}\n")
 
     def help_EOF(self):
-        print("EOF command to exit the program\n")
+        print(f"{Fore.GREEN}EOF command to exit the program{Style.RESET_ALL}\n")
 
     def help_create(self):
         pass
@@ -168,6 +215,32 @@ class HBNBCommand(cmd.Cmd):
 
     def help_update(self):
         pass
+
+    def default(self, line: str) -> bool:
+        """
+            Called when command prefix is not recognized in order
+            to verify and catch or not the adequate function.
+        """
+        try:
+            regex = "^(.*)\.(.*)\((.*)\)$"
+            regex_prog = re.compile(regex)
+            results = regex_prog.findall(line)
+            args = results[0]
+            if args and args[0] in self.__classes and len(args) == 3:
+                className, command, arguments = args
+                if command in self.__commands:
+                    arguments = arguments.replace(", ", " ")
+                    arguments = arguments.replace(",", " ")
+                    arguments = arguments.replace('"', "")
+                    if len(arguments) > 0:
+                        arguments = "{} {}".format(className, arguments)
+                    else:
+                        arguments = "{}".format(className)
+                    print("self.do_{}(\"{}\")".format(command, arguments))
+                    eval("self.do_{}(\"{}\")".format(command, arguments))
+                    return
+        except:
+            return super().default(line)
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()

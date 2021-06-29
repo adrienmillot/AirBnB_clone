@@ -53,3 +53,51 @@ class PlaceTest(unittest.TestCase):
                 '__class__': 'Place'
             }
         )
+
+    def testNameType(self):
+        """
+            Check name attribute type
+        """
+        self.assertIsInstance(Place().name, str)
+
+    def testDescriptionType(self):
+        """
+            Check description attribute type
+        """
+        self.assertIsInstance(Place().description, str)
+
+    def testNumberRoomsType(self):
+        """
+            Check number_rooms attribute type
+        """
+        self.assertIsInstance(Place().number_rooms, int)
+
+    def testNumberBathRoomsType(self):
+        """
+            Check number_bathrooms attribute type
+        """
+        self.assertIsInstance(Place().number_bathrooms, int)
+
+    def testMaxGuestType(self):
+        """
+            Check max_guest attribute type
+        """
+        self.assertIsInstance(Place().max_guest, int)
+
+    def testPriceByNightType(self):
+        """
+            Check price_by_night attribute type
+        """
+        self.assertIsInstance(Place().price_by_night, int)
+
+    def testLatitudeType(self):
+        """
+            Check latitude attribute type
+        """
+        self.assertIsInstance(Place().latitude, float)
+
+    def testLongitudeType(self):
+        """
+            Check longitude attribute type
+        """
+        self.assertIsInstance(Place().longitude, float)

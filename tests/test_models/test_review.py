@@ -39,3 +39,21 @@ class ReviewTest(unittest.TestCase):
                 '__class__': 'Review'
             }
         )
+
+    def testPlaceIdType(self):
+        """
+            Check place_id type
+        """
+        self.assertIsInstance(Review().place_id, str)
+
+    def testUserIdType(self):
+        """
+            Check user_id type
+        """
+        self.assertIsInstance(Review().user_id, str)
+
+    def testTextType(self):
+        """
+            Check text type
+        """
+        self.assertIsInstance(Review().text, str)

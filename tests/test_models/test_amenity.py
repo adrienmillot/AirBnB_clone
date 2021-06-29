@@ -39,3 +39,9 @@ class AmenityTest(unittest.TestCase):
                 '__class__': 'Amenity'
             }
         )
+
+    def testNameType(self):
+        """
+            Check name attribute type
+        """
+        self.assertIsInstance(Amenity().name, str)

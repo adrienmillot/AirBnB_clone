@@ -39,3 +39,9 @@ class StateTest(unittest.TestCase):
                 '__class__': 'State'
             }
         )
+
+    def testNameType(self):
+        """
+            Check name attribute type
+        """
+        self.assertIsInstance(State().name, str)

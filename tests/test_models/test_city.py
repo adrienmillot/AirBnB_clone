@@ -39,3 +39,15 @@ class CityTest(unittest.TestCase):
                 '__class__': 'City'
             }
         )
+
+    def testNameType(self):
+        """
+            Check name attribute type
+        """
+        self.assertIsInstance(City().name, str)
+
+    def testStateIdType(self):
+        """
+            Check state_id attribute type
+        """
+        self.assertIsInstance(City().state_id, str)

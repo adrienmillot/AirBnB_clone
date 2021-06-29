@@ -842,7 +842,7 @@ class ConsoleUpdateTest(unittest.TestCase):
         with patch("sys.stdout", new=StringIO()) as output:
             obj = self.__getObj(prmClassName, id)
             self.assertNotIn("first_name", obj.__dict__.keys())
-            command = "{}.update({}, \"{}\", \"{}\")".format(prmClassName, id, "first_name", "john")
+            command = "{}.update(\"{}\", \"{}\", \"{}\")".format(prmClassName, id, "first_name", "john")
             self.assertFalse(HBNBCommand().onecmd(command))
             obj = self.__getObj(prmClassName, id)
             self.assertIn("first_name", obj.__dict__.keys())

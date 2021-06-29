@@ -4,89 +4,70 @@
 
 from models.engine.file_storage import FileStorage
 from models.base_model import BaseModel
-import os
+from models.user import User
+from models.amenity import Amenity
+from models.state import State
+from models.city import City
+from models.place import Place
+from models.review import Review
+from models import storage
 import unittest
 
 
-class FileStorageTest(unittest.TestCase):
-    """ FileStorageTest class """
+class FileStorageAllTest(unittest.TestCase):
+    def testAllInstance(self):
+        storage = FileStorage()
+        newDict = storage.all()
+        self.assertIsInstance(newDict, dict)
+        self.assertDictEqual(newDict, FileStorage._FileStorage__objects)
 
-    def testClassDocumentation(self):
-        """
-            Class have documentation
-        """
-        self.assertGreater(len(FileStorage.__doc__), 0)
 
-    def testConstructorDocumentation(self):
-        """
-            Constructor have documentation
-        """
-        self.assertGreater(len(FileStorage.__init__.__doc__), 0)
+class FileStorageNewTest(unittest.TestCase):
+    __classes = {
+        'BaseModel': BaseModel, 'User': User, 'State': State, 'City': City, 'Amenity': Amenity, 'Place': Place, 'Review': Review
+    }
 
-    def testAllDocumentation(self):
+    def testNewInstance(self):
         """
-            All have documentation
+            new() function test
         """
-        self.assertGreater(len(FileStorage.all.__doc__), 0)
+        for classNameStr, className in self.__classes.items():
+            self.__newInstance(classNameStr, className)
 
-    def testNewDocumentation(self):
-        """
-            New have documentation
-        """
-        self.assertGreater(len(FileStorage.new.__doc__), 0)
+    def __newInstance(self, prmClassNameStr, prmClassName):
+        tmpDict = storage.all()
+        instance = prmClassName()
+        key = "{}.{}".format(prmClassNameStr, instance.id)
+        self.assertDictEqual(tmpDict, storage.all())
+        storage.new(instance)
+        tmpDict[key] = instance
+        self.assertDictEqual(tmpDict, storage.all())
 
-    def testSaveDocumentation(self):
-        """
-            Save have documentation
-        """
-        self.assertGreater(len(FileStorage.save.__doc__), 0)
 
-    def testReloadDocumentation(self):
-        """
-            Reload have documentation
-        """
-        self.assertGreater(len(FileStorage.reload.__doc__), 0)
+class FileStorageSaveTest(unittest.TestCase):
+    __classes = {
+        'BaseModel': BaseModel, 'User': User, 'State': State, 'City': City, 'Amenity': Amenity, 'Place': Place, 'Review': Review
+    }
 
-    def testAll(self):
+    def testSaveInstance(self):
         """
-            Test all function
+            save() function test
         """
-        f1 = FileStorage()
-        self.assertIsInstance(f1.all(), dict)
+        for classNameStr, className in self.__classes.items():
+            self.__saveInstance(classNameStr, className)
 
-    def testNew(self):
-        """
-            Test new function
-        """
-        f1 = FileStorage()
-        self.assertEqual(len(f1.all()), 4)
-        b1 = BaseModel()
-        f1.new(b1)
-        self.assertEqual(len(f1.all()), 5)
-        for key, value in f1.all().items():
-            self.assertIsInstance(key, str)
-            self.assertEqual(key, "{}.{}".format(
-                type(value).__name__,
-                value.id)
-            )
+    def __saveInstance(self, prmClassNameStr, prmClassName):
+        import json
 
-    def testSave(self):
-        """
-            Test save function
-        """
-        f1 = FileStorage()
-        f1.save()
-        self.assertTrue(os.path.isfile("file.json"))
-        if os.path.isfile("file.json"):
-            os.remove("file.json")
-
-    def testReload(self):
-        """
-            Test reload function
-        """
-        f1 = FileStorage()
-        f1.reload()
-        self.assertEqual(len(f1.all()), 5)
-        f1.save()
-        if os.path.isfile("file.json"):
-            os.remove("file.json")
+        tmpDict = {}
+        for key, value in storage.all().items():
+            tmpDict[key] = value.to_dict()
+        instance = prmClassName()
+        key = "{}.{}".format(prmClassNameStr, instance.id)
+        storage.new(instance)
+        storage.save()
+        tmpDict[key] = instance.to_dict()
+        inputStr = json.dumps(tmpDict)
+        with open("file.json", "r") as file:
+            output = file.read()
+        self.assertEqual(json.loads(inputStr), json.loads(output))

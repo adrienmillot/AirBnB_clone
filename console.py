@@ -13,14 +13,13 @@ from models.place import Place
 from models.review import Review
 import json
 import re
-from colorama import Fore, Style
 
 
 class HBNBCommand(cmd.Cmd):
     """
         Console
     """
-    prompt = f"{Fore.BLUE}(hbnb){Style.RESET_ALL} "
+    prompt = "(hbnb) "
     __classes = [
         'BaseModel', 'User', 'State', 'City', 'Amenity', 'Place', 'Review'
     ]
@@ -42,9 +41,9 @@ class HBNBCommand(cmd.Cmd):
 
             instance = eval(args[0])()
             storage.save()
-            self.__printCommandResult(instance.id)
+            print(instance.id)
         except Exception as exception:
-            print("{}".format(exception.args[0]))
+            print(exception.args[0])
 
     def do_show(self, prmArgs):
         """
@@ -67,9 +66,9 @@ class HBNBCommand(cmd.Cmd):
             if key not in dict:
                 raise ValueError("** no instance found **")
 
-            self.__printCommandResult(dict[key])
+            print(dict[key])
         except Exception as exception:
-            print("{}".format(exception.args[0]))
+            print(exception.args[0])
 
     def do_all(self, prmArg):
         """
@@ -81,16 +80,17 @@ class HBNBCommand(cmd.Cmd):
 
             args = prmArg.split()
 
-            if args[0] not in self.__classes:
+            if args and args[0] not in self.__classes:
                 raise ValueError("** class doesn't exist **")
 
             for key, value in storage.all().items():
-                if args[0] is None or args[0] == type(value).__name__:
+                if (not args or args[0] is None or
+                        args[0] == type(value).__name__):
                     list.append(str(value))
 
-            self.__printCommandResult(list)
+            print(list)
         except Exception as exception:
-            print("{}".format(exception.args[0]))
+            print(exception.args[0])
 
     def do_destroy(self, prmArgs):
         """
@@ -116,7 +116,7 @@ class HBNBCommand(cmd.Cmd):
             del dict[key]
             storage.save()
         except Exception as exception:
-            print("{}".format(exception.args[0]))
+            print(exception.args[0])
 
     def do_update(self, prmArgs):
         """
@@ -147,16 +147,11 @@ class HBNBCommand(cmd.Cmd):
 
             className, command, attribute, value = args
 
-            if value[0] != '"':
-                value = '"' + value
-            if value[-1] != '"':
-                value = value + '"'
-
             if attribute not in ("id", "created_at", "updated_at"):
-                setattr(obj, attribute, value[1:-1])
+                setattr(obj, attribute, self.__type(value))
                 storage.save()
         except Exception as exception:
-            print("{}".format(exception.args[0]))
+            print(exception.args[0])
 
     def do_count(self, prmArg):
         """
@@ -177,9 +172,9 @@ class HBNBCommand(cmd.Cmd):
                 if args[0] is None or args[0] == type(value).__name__:
                     count += 1
 
-            self.__printCommandResult(count)
+            print(count)
         except Exception as exception:
-            print("{}".format(exception.args[0]))
+            print(exception.args[0])
 
     def do_quit(self, arg):
         raise SystemExit
@@ -187,37 +182,36 @@ class HBNBCommand(cmd.Cmd):
     def do_EOF(self, arg):
         raise SystemExit
 
-    def __printCommandResult(self, prmResult: str):
-        print(f'{Fore.CYAN}', end='')
-        print(prmResult, end='')
-        print(f'{Style.RESET_ALL}')
-
-    def __printHelp(self, prmMessage: str):
-        print(f"{Fore.GREEN}", end='')
-        print(prmMessage, end='')
-        print(f"{Style.RESET_ALL}\n")
-
-
     def help_quit(self):
-        self.__printHelp("Quit command to exit the program")
+        print("Quit command to exit the program\n")
 
     def help_EOF(self):
-        self.__printHelp("EOF command to exit the program")
+        print("EOF command to exit the program\n")
 
     def help_create(self):
-        pass
+        print("Creates a new instance of BaseModel, \
+saves it (to the JSON file) and prints the id.\n")
 
     def help_show(self):
-        pass
+        print("Prints the string representation of \
+an instance based on the class name and id.\n")
 
     def help_all(self):
-        pass
+        print("Prints all string representation of \
+all instances based or not on the class name.\n")
 
     def help_destroy(self):
-        pass
+        print("Deletes an instance based on the \
+class name and id (save the change into the JSON file).\n")
 
     def help_update(self):
-        pass
+        print("Updates an instance based on the \
+class name and id by adding or updating attribute (save the \
+change into the JSON file).\n")
+
+    def help_count(self):
+        print("Update your command interpreter \
+(console.py) to retrieve the number of instances of a class.\n")
 
     def default(self, line: str) -> bool:
         """
@@ -228,28 +222,41 @@ class HBNBCommand(cmd.Cmd):
             if self.__checkValidArguments(line):
                 clName, cmd, args = self.__getArgumentsFromLine(line)
                 if self.__checkValidCommand(cmd):
-                    args = self.__formatArguments(args)
-                    formattedCommand = self.__formatCommand(clName, cmd, args)
+                    args = self.__cleanArguments(args)
+                    formattedCommand = self.__buildCommand(clName, cmd, args)
                     eval(formattedCommand)
                     return
                 elif (cmd == 'update'):
                     parameters = self.__getParametersFromArguments(args)
-                    id = self.__formatArguments(parameters[0])
+                    id = self.__cleanArguments(parameters[0])
                     if self.__isValidJson(parameters[1]):
-                        for attribute, value in json.loads(parameters[1]).items():
+                        jsonString = parameters[1].replace("'", '"')
+                        jsonData = json.loads(jsonString)
+                        for attribute, value in jsonData.items():
                             args = "{} {} {}".format(id, attribute, value)
-                            formattedCommand = self.__formatCommand(clName, cmd, args)
+                            formattedCommand = self.__buildCommand(
+                                clName,
+                                cmd,
+                                args
+                            )
                             eval(formattedCommand)
-                            return
+                        return
                     else:
-                        args = self.__formatArguments(args)
-                        formattedCommand = self.__formatCommand(clName, cmd, args)
+                        args = self.__cleanArguments(args)
+                        formattedCommand = self.__buildCommand(
+                            clName,
+                            cmd,
+                            args
+                        )
                         eval(formattedCommand)
                         return
         except:
             return super().default(line)
 
     def __getArgumentsFromLine(self, prmLine):
+        """
+            return argument from command line
+        """
         regex = "^(.*)\.(.*)\((.*)\)$"
         regex_prog = re.compile(regex)
         results = regex_prog.findall(prmLine)
@@ -258,6 +265,10 @@ class HBNBCommand(cmd.Cmd):
         return arguments
 
     def __isValidJson(self, prmString: str) -> bool:
+        """
+            check if a string is valid json
+        """
+        prmString = prmString.replace("'", '"')
         try:
             json_object = json.loads(prmString)
         except ValueError as e:
@@ -265,7 +276,12 @@ class HBNBCommand(cmd.Cmd):
         return True
 
     def __getParametersFromArguments(self, prmArguments):
-        regex = "^(\"[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}\")\, ?(.*)$"
+        """
+            return parameter from argument
+        """
+        regex = "^(\"[a-fA-F0-9]{8}-\
+[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-\
+[a-fA-F0-9]{12}\")\, ?(.*)$"
         regex_prog = re.compile(regex)
         results = regex_prog.findall(prmArguments)
         parameters = results[0]
@@ -273,28 +289,54 @@ class HBNBCommand(cmd.Cmd):
         return parameters
 
     def __checkValidArguments(self, prmLine: str) -> bool:
+        """
+            check argument's validity
+        """
         arguments = self.__getArgumentsFromLine(prmLine)
+
+        if arguments and not arguments[0]:
+            print("** class name missing **")
+        elif arguments and arguments[0] not in self.__classes:
+            print("** class doesn't exist **")
 
         return (arguments and arguments[0] in self.__classes and
                 len(arguments) == 3)
 
     def __checkValidCommand(self, prmCommand: str) -> bool:
+        """
+            check command validity
+        """
         return prmCommand in self.__commands
 
-    def __formatArguments(self, prmArguments) -> str:
+    def __cleanArguments(self, prmArguments) -> str:
+        """
+            clean arguments
+        """
         prmArguments = prmArguments.replace(", ", " ")
         prmArguments = prmArguments.replace(",", " ")
         prmArguments = prmArguments.replace('"', "")
 
         return prmArguments
 
-    def __formatCommand(self, prmClassName, prmCommand, prmArguments):
+    def __buildCommand(self, prmClassName, prmCommand, prmArguments):
+        """
+            build command
+        """
         if len(prmArguments) > 0:
             arguments = "{} {}".format(prmClassName, prmArguments)
         else:
             arguments = "{}".format(prmClassName)
 
         return "self.do_{}(\"{}\")".format(prmCommand, arguments)
+
+    def __type(self, prmStr: str):
+        try:
+            return int(prmStr)
+        except:
+            try:
+                return float(prmStr)
+            except:
+                return str(prmStr).replace('"', "").replace("'", "")
 
 
 if __name__ == '__main__':

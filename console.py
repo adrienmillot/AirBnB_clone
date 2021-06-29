@@ -26,6 +26,9 @@ class HBNBCommand(cmd.Cmd):
     ]
     __commands = ['all', 'count', 'create', 'destroy', 'show']
 
+    def emptyline(self):
+        pass
+
     def do_create(self, prmArg):
         """
             Creates a new instance of BaseModel, saves it (to the JSON file)

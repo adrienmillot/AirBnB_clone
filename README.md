@@ -1,4 +1,6 @@
 #  AirBnB clone - The console
+![coverage](coverage-badge.svg) ![Tests number](tests-badge.svg)
+
 ![enter image description here](https://i.imgur.com/44u0pXG.png)
                  Welcome to the AirBnB clone project! - The Console 
 
@@ -19,10 +21,13 @@ A command interpreter is the part of a computer operating system that understand
 
 # Installation
 
-    git clone https://github.com/adrienmillot/AirBnB_clone.git
-    cd AirBnB_clone
+```shell
+git clone https://github.com/adrienmillot/AirBnB_clone.git
+cd AirBnB_clone
+```
 
 # How to use the interpreter?
+```shell
 $ ./console.py
 (hbnb) help
 
@@ -34,7 +39,7 @@ EOF  help  quit
 (hbnb) 
 (hbnb) quit
 $
-
+```
 
 
 ### **Requirements Python Scripts**

@@ -198,21 +198,29 @@ class ConsoleAllTest(unittest.TestCase):
         with patch("sys.stdout", new=StringIO()) as output:
             self.assertFalse(HBNBCommand().onecmd(
                 "create {}".format(prmClassName)))
+        id = output.getvalue()
         with patch("sys.stdout", new=StringIO()) as output:
             command = "all {}".format(prmClassName)
             self.assertFalse(HBNBCommand().onecmd(command))
             self.assertIn(prmClassName, output.getvalue().strip())
             self.assertNotIn(prmOtherClassName, output.getvalue().strip())
+        with patch("sys.stdout", new=StringIO()) as output:
+            self.assertFalse(HBNBCommand().onecmd(
+                "{}.destroy({})".format(prmClassName, id)))
 
     def __allInstanceDotNotation(self, prmClassName, prmOtherClassName):
         with patch("sys.stdout", new=StringIO()) as output:
             self.assertFalse(HBNBCommand().onecmd(
                 "create {}".format(prmClassName)))
+        id = output.getvalue()
         with patch("sys.stdout", new=StringIO()) as output:
             command = "{}.all()".format(prmClassName)
             self.assertFalse(HBNBCommand().onecmd(command))
             self.assertIn(prmClassName, output.getvalue().strip())
             self.assertNotIn(prmOtherClassName, output.getvalue().strip())
+        with patch("sys.stdout", new=StringIO()) as output:
+            self.assertFalse(HBNBCommand().onecmd(
+                "{}.destroy({})".format(prmClassName, id)))
 
 
 class ConsoleCountTest(unittest.TestCase):
@@ -305,6 +313,9 @@ class ConsoleCountTest(unittest.TestCase):
 
 
 class ConsoleCreateTest(unittest.TestCase):
+    __classes = [
+        'BaseModel', 'User', 'State', 'City', 'Amenity', 'Place', 'Review'
+    ]
 
     @classmethod
     def setUp(self):
@@ -341,54 +352,23 @@ class ConsoleCreateTest(unittest.TestCase):
             HBNBCommand().onecmd("create toto")
             self.assertEqual(output.getvalue(), "** class doesn't exist **\n")
 
-    def testCreateAmenity(self):
+    def testCreateInstance(self):
         """
             create() Amenity
         """
-        self.__testCreateObject("Amenity")
-
-    def testCreateBaseModel(self):
-        """
-            create() BaseModel
-        """
-        self.__testCreateObject("BaseModel")
-
-    def testCreateCity(self):
-        """
-            create() City
-        """
-        self.__testCreateObject("City")
-
-    def testCreatePlace(self):
-        """
-            create() Place
-        """
-        self.__testCreateObject("Place")
-
-    def testCreateReview(self):
-        """
-            create() Review
-        """
-        self.__testCreateObject("Review")
-
-    def testCreateState(self):
-        """
-            create() State
-        """
-        self.__testCreateObject("State")
-
-    def testCreateUser(self):
-        """
-            create() User
-        """
-        self.__testCreateObject("User")
+        for prmClassName in self.__classes:
+            self.__testCreateObject(prmClassName)
 
     def __testCreateObject(self, prmClassName):
         with patch("sys.stdout", new=StringIO()) as output:
             self.assertFalse(HBNBCommand().onecmd(
                 "create {}".format(prmClassName)))
-            testKey = "{}.{}".format(prmClassName, output.getvalue().strip())
-            self.assertIn(testKey, storage.all().keys())
+            id = output.getvalue().strip()
+            key = "{}.{}".format(prmClassName, id)
+            self.assertIn(key, storage.all().keys())
+        with patch("sys.stdout", new=StringIO()) as output:
+            self.assertFalse(HBNBCommand().onecmd(
+                "{}.destroy({})".format(prmClassName, id)))
 
 
 class ConsoleDestroyTest(unittest.TestCase):
@@ -572,6 +552,9 @@ class ConsoleShowTest(unittest.TestCase):
         with patch('sys.stdout', new=StringIO()) as output:
             HBNBCommand().onecmd("show toto")
             self.assertEqual(output.getvalue(), "** class doesn't exist **\n")
+        with patch('sys.stdout', new=StringIO()) as output:
+            HBNBCommand().onecmd("toto.show()")
+            self.assertEqual(output.getvalue(), "** class doesn't exist **\n")
 
     def testMissingIdSpaceNotation(self):
         """
@@ -653,6 +636,9 @@ class ConsoleShowTest(unittest.TestCase):
             command = "show {} {}".format(prmClassName, id)
             self.assertFalse(HBNBCommand().onecmd(command))
             self.assertEqual(obj.__str__(), output.getvalue().strip())
+        with patch("sys.stdout", new=StringIO()) as output:
+            self.assertFalse(HBNBCommand().onecmd(
+                "{}.destroy({})".format(prmClassName, id)))
 
     def __showInstanceDotNotation(self, prmClassName):
         with patch("sys.stdout", new=StringIO()) as output:
@@ -664,12 +650,21 @@ class ConsoleShowTest(unittest.TestCase):
             command = "{}.show({})".format(prmClassName, id)
             self.assertFalse(HBNBCommand().onecmd(command))
             self.assertEqual(obj.__str__(), output.getvalue().strip())
+        with patch("sys.stdout", new=StringIO()) as output:
+            self.assertFalse(HBNBCommand().onecmd(
+                "destroy {} {}".format(prmClassName, id)))
+        with patch("sys.stdout", new=StringIO()) as output:
+            self.assertFalse(HBNBCommand().onecmd(
+                "{}.destroy({})".format(prmClassName, id)))
 
     def __getObj(self, prmClassName: str, prmUuid: str):
         return storage.all()["{}.{}".format(prmClassName, prmUuid)]
 
 
 class ConsoleUpdateTest(unittest.TestCase):
+    __classes = [
+        'BaseModel', 'User', 'State', 'City', 'Amenity', 'Place', 'Review'
+    ]
 
     @classmethod
     def setUp(self):
@@ -690,7 +685,7 @@ class ConsoleUpdateTest(unittest.TestCase):
         except IOError:
             pass
 
-    def testMissingClass(self):
+    def testShowMissingClass(self):
         """
             update() missing class
         """
@@ -705,3 +700,172 @@ class ConsoleUpdateTest(unittest.TestCase):
         with patch('sys.stdout', new=StringIO()) as output:
             HBNBCommand().onecmd("update toto")
             self.assertEqual(output.getvalue(), "** class doesn't exist **\n")
+        with patch('sys.stdout', new=StringIO()) as output:
+            HBNBCommand().onecmd("toto.update()")
+            self.assertEqual(output.getvalue(), "** class doesn't exist **\n")
+
+    def testMissingIdSpaceNotation(self):
+        """
+            update missing id command
+        """
+        for className in self.__classes:
+            self.__missingIdSpaceNotation(className)
+
+    def testMissingIdDotNotation(self):
+        """
+            update() missing id command
+        """
+        for className in self.__classes:
+            self.__missingIdDotNotation(className)
+
+    def testNoInstanceFoundSpaceNotation(self):
+        """
+            update no instance command
+        """
+        for className in self.__classes:
+            self.__noInstanceFoundSpaceNotation(className)
+
+    def testNoInstanceFoundDotNotation(self):
+        """
+            update() no instance command
+        """
+        for className in self.__classes:
+            self.__noInstanceFoundDotNotation(className)
+
+    def testMissingAttributeSpaceNotation(self):
+        """
+            update() no instance command
+        """
+        for className in self.__classes:
+            self.__missingAttributeSpaceNotation(className)
+
+    def testMissingAttributeDotNotation(self):
+        """
+            update() no instance command
+        """
+        for className in self.__classes:
+            self.__missingAttributeDotNotation(className)
+
+    def testUpdateInstanceSpaceNotation(self):
+        """
+            update no instance command
+        """
+        for className in self.__classes:
+            self.__updateInstanceSpaceNotation(className)
+
+    def testUpdateInstanceDotNotation(self):
+        """
+            update() no instance command
+        """
+        for className in self.__classes:
+            self.__updateInstanceDotNotation(className)
+            self.__updateInstanceWithJSONDotNotation(className)
+
+    def __missingIdSpaceNotation(self, prmClassName: str):
+        with patch("sys.stdout", new=StringIO()) as output:
+            self.assertFalse(HBNBCommand().onecmd(
+                "update {}".format(prmClassName)))
+            self.assertEqual("** instance id missing **",
+                             output.getvalue().strip())
+
+    def __missingIdDotNotation(self, prmClassName: str):
+        with patch("sys.stdout", new=StringIO()) as output:
+            self.assertFalse(HBNBCommand().onecmd(
+                "{}.update()".format(prmClassName)))
+            self.assertEqual("** instance id missing **",
+                             output.getvalue().strip())
+
+    def __noInstanceFoundSpaceNotation(self, prmClassName: str):
+        with patch("sys.stdout", new=StringIO()) as output:
+            self.assertFalse(HBNBCommand().onecmd(
+                "update {} 1".format(prmClassName)))
+            self.assertEqual("** no instance found **",
+                             output.getvalue().strip())
+
+    def __noInstanceFoundDotNotation(self, prmClassName: str):
+        with patch("sys.stdout", new=StringIO()) as output:
+            self.assertFalse(HBNBCommand().onecmd(
+                "{}.update(1)".format(prmClassName)))
+            self.assertEqual("** no instance found **",
+                             output.getvalue().strip())
+
+    def __missingAttributeSpaceNotation(self, prmClassName: str):
+        with patch("sys.stdout", new=StringIO()) as output:
+            self.assertFalse(HBNBCommand().onecmd(
+                "create {}".format(prmClassName)))
+            id = output.getvalue().strip()
+            obj = self.__getObj(prmClassName, id)
+        with patch("sys.stdout", new=StringIO()) as output:
+            self.assertFalse(HBNBCommand().onecmd(
+                "update {} {}".format(prmClassName, id)))
+            self.assertEqual("** attribute name missing **",
+                             output.getvalue().strip())
+        with patch("sys.stdout", new=StringIO()) as output:
+            self.assertFalse(HBNBCommand().onecmd(
+                "{}.destroy({})".format(prmClassName, id)))
+
+    def __missingAttributeDotNotation(self, prmClassName: str):
+        with patch("sys.stdout", new=StringIO()) as output:
+            self.assertFalse(HBNBCommand().onecmd(
+                "create {}".format(prmClassName)))
+            id = output.getvalue().strip()
+            obj = self.__getObj(prmClassName, id)
+        with patch("sys.stdout", new=StringIO()) as output:
+            self.assertFalse(HBNBCommand().onecmd(
+                "{}.update(\"{}\")".format(prmClassName, id)))
+            self.assertEqual("** attribute name missing **",
+                             output.getvalue().strip())
+        with patch("sys.stdout", new=StringIO()) as output:
+            self.assertFalse(HBNBCommand().onecmd(
+                "{}.destroy({})".format(prmClassName, id)))
+
+    def __updateInstanceSpaceNotation(self, prmClassName):
+        with patch("sys.stdout", new=StringIO()) as output:
+            self.assertFalse(HBNBCommand().onecmd(
+                "create {}".format(prmClassName)))
+            id = output.getvalue().strip()
+        with patch("sys.stdout", new=StringIO()) as output:
+            obj = self.__getObj(prmClassName, id)
+            self.assertNotIn("first_name", obj.__dict__.keys())
+            command = "update {} {} {} {}".format(prmClassName, id, "first_name", "john")
+            self.assertFalse(HBNBCommand().onecmd(command))
+            self.assertEqual(obj.first_name, "john")
+        with patch("sys.stdout", new=StringIO()) as output:
+            self.assertFalse(HBNBCommand().onecmd(
+                "{}.destroy({})".format(prmClassName, id)))
+
+    def __updateInstanceDotNotation(self, prmClassName):
+        with patch("sys.stdout", new=StringIO()) as output:
+            self.assertFalse(HBNBCommand().onecmd(
+                "create {}".format(prmClassName)))
+            id = output.getvalue().strip()
+        with patch("sys.stdout", new=StringIO()) as output:
+            obj = self.__getObj(prmClassName, id)
+            self.assertNotIn("first_name", obj.__dict__.keys())
+            command = "{}.update({}, \"{}\", \"{}\")".format(prmClassName, id, "first_name", "john")
+            self.assertFalse(HBNBCommand().onecmd(command))
+            obj = self.__getObj(prmClassName, id)
+            self.assertIn("first_name", obj.__dict__.keys())
+        with patch("sys.stdout", new=StringIO()) as output:
+            self.assertFalse(HBNBCommand().onecmd(
+                "{}.destroy({})".format(prmClassName, id)))
+
+    def __updateInstanceWithJSONDotNotation(self, prmClassName):
+        with patch("sys.stdout", new=StringIO()) as output:
+            self.assertFalse(HBNBCommand().onecmd(
+                "create {}".format(prmClassName)))
+            id = output.getvalue().strip()
+        with patch("sys.stdout", new=StringIO()) as output:
+            obj = self.__getObj(prmClassName, id)
+            self.assertNotIn("first_name", obj.__dict__.keys())
+            jsonData = "{'first_name': 'john'}"
+            command = "{}.update(\"{}\", {})".format(prmClassName, id, jsonData)
+            self.assertFalse(HBNBCommand().onecmd(command))
+            obj = self.__getObj(prmClassName, id)
+            self.assertIn("first_name", obj.__dict__.keys())
+        with patch("sys.stdout", new=StringIO()) as output:
+            self.assertFalse(HBNBCommand().onecmd(
+                "{}.destroy({})".format(prmClassName, id)))
+
+    def __getObj(self, prmClassName: str, prmUuid: str):
+        return storage.all()["{}.{}".format(prmClassName, prmUuid)]

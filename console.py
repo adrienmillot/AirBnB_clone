@@ -253,7 +253,7 @@ change into the JSON file).\n")
                             args
                         )
                         eval(formattedCommand)
-                        return
+                    return
         except:
             return super().default(line)
 
@@ -291,8 +291,7 @@ change into the JSON file).\n")
 
             return parameters[0], parameters[3]
         except:
-            print("** instance id missing **")
-            return False
+            return '', ''
 
     def __checkValidArguments(self, prmLine: str) -> bool:
         """

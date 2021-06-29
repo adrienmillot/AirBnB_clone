@@ -283,14 +283,16 @@ change into the JSON file).\n")
         """
             return parameter from argument
         """
-        regex = "^(\"[a-fA-F0-9]{8}-\
-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-\
-[a-fA-F0-9]{12}\")\, ?(.*)$"
-        regex_prog = re.compile(regex)
-        results = regex_prog.findall(prmArguments)
-        parameters = results[0]
+        try:
+            regex = "^(.*)((\,)? )?(.*)$"
+            regex_prog = re.compile(regex)
+            results = regex_prog.findall(prmArguments)
+            parameters = results[0]
 
-        return parameters
+            return parameters[0], parameters[3]
+        except:
+            print("** instance id missing **")
+            return False
 
     def __checkValidArguments(self, prmLine: str) -> bool:
         """
@@ -305,6 +307,20 @@ change into the JSON file).\n")
 
         return (arguments and arguments[0] in self.__classes and
                 len(arguments) == 3)
+
+    def __checkValidParameters(self, prmArguments, prmClassName) -> bool:
+        parameters = self.__getParametersFromArguments(prmArguments)
+
+        if not parameters or not parameters[0]:
+            print("** instance id missing **")
+            return False
+        else:
+            key = "{}.{}".format(prmClassName, parameters[0])
+            if key not in storage.all():
+                print("** no instance found **")
+                return False
+
+        return True if parameters else False
 
     def __checkValidCommand(self, prmCommand: str) -> bool:
         """

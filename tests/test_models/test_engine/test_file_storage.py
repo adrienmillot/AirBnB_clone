@@ -24,7 +24,8 @@ class FileStorageAllTest(unittest.TestCase):
 
 class FileStorageNewTest(unittest.TestCase):
     __classes = {
-        'BaseModel': BaseModel, 'User': User, 'State': State, 'City': City, 'Amenity': Amenity, 'Place': Place, 'Review': Review
+        'BaseModel': BaseModel, 'User': User, 'State': State, 'City': City,
+        'Amenity': Amenity, 'Place': Place, 'Review': Review
     }
 
     def testNewInstance(self):
@@ -46,7 +47,8 @@ class FileStorageNewTest(unittest.TestCase):
 
 class FileStorageSaveTest(unittest.TestCase):
     __classes = {
-        'BaseModel': BaseModel, 'User': User, 'State': State, 'City': City, 'Amenity': Amenity, 'Place': Place, 'Review': Review
+        'BaseModel': BaseModel, 'User': User, 'State': State, 'City': City,
+        'Amenity': Amenity, 'Place': Place, 'Review': Review
     }
 
     def testSaveInstance(self):

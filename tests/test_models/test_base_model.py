@@ -70,11 +70,11 @@ class BaseModelTest(unittest.TestCase):
         self.assertDictEqual(
             b1.to_dict(),
             {
-                'id': b1.id,
+                '__class__': 'BaseModel',
                 'created_at': b1.created_at.strftime("%Y-%m-%dT%H:%M:%S.%f"),
-                'updated_at': b1.updated_at.strftime("%Y-%m-%dT%H:%M:%S.%f"),
-                'name': "Holberton",
+                'id': b1.id,
                 'my_number': 89,
-                '__class__': 'BaseModel'
+                'name': "Holberton",
+                'updated_at': b1.updated_at.strftime("%Y-%m-%dT%H:%M:%S.%f")
             }
         )

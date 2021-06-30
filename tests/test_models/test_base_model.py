@@ -61,6 +61,10 @@ class BaseModelTest(unittest.TestCase):
         """
             Test save function
         """
+        import os
+        import json
+        from models import storage
+
         b1 = BaseModel()
         b1.name = "Holberton"
         b1.my_number = 89
@@ -78,3 +82,17 @@ class BaseModelTest(unittest.TestCase):
                 'updated_at': b1.updated_at.strftime("%Y-%m-%dT%H:%M:%S.%f")
             }
         )
+
+        tmpDict = {}
+        for key, value in storage.all().items():
+            tmpDict[key] = value.to_dict()
+        b1 = BaseModel()
+        key = "{}.{}".format("BaseModel", b1.id)
+        storage.new(b1)
+        b1.save()
+        tmpDict[key] = b1.to_dict()
+        inputStr = json.dumps(tmpDict)
+        self.assertTrue(os.path.exists("file.json"))
+        with open("file.json", "r") as file:
+            output = file.read()
+        self.assertEqual(json.loads(inputStr), json.loads(output))

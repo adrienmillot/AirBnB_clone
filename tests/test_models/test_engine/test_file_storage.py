@@ -73,3 +73,25 @@ class FileStorageSaveTest(unittest.TestCase):
         with open("file.json", "r") as file:
             output = file.read()
         self.assertEqual(json.loads(inputStr), json.loads(output))
+
+
+class FileStorageReloadTest(unittest.TestCase):
+    __classes = {
+        'BaseModel': BaseModel, 'User': User, 'State': State, 'City': City,
+        'Amenity': Amenity, 'Place': Place, 'Review': Review
+    }
+
+    def testReloadInstance(self):
+        """
+            reload() function test
+        """
+        for classNameStr, className in self.__classes.items():
+            self.__reloadInstance(classNameStr, className)
+
+    def __reloadInstance(self, prmClassNameStr, prmClassName):
+        import json
+
+        FileStorage._FileStorage__objects = {}
+        self.assertEqual(storage.all(), {})
+        storage.reload()
+        self.assertNotEqual(storage.all(), {})

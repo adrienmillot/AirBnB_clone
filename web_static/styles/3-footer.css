@@ -1,0 +1,11 @@
+body > footer {
+  background-color: white;
+  height: 60px;
+  width: 100%;
+  border-top: 1px solid #cccccc;
+  bottom: 0;
+  line-height: 60px;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+}

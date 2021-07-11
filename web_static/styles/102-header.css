@@ -1,0 +1,45 @@
+body > header {
+	background-color: white;
+	height: 70px;
+	width: 100%;
+	border-bottom: 1px solid #cccccc;
+      }
+      
+      body > header > img {
+	position: relative;
+	left: 20px;
+	top: 5px;
+      }
+      
+
+/* Smartphones portrait and landscapes */
+@media only screen and (min-width: 320px) and (max-width: 568px) {
+}
+
+/* Smartphones landscapes */
+@media only screen and (min-width: 321px) and (max-width: 567px) {
+}
+
+/* Smartphones portrait */
+@media only screen and (max-width: 768px) {
+}
+
+/* Tablett portrait and landscapes */
+@media only screen and (min-width: 768px) and (max-width: 1024px) {
+}
+
+/* Tablett landscapes */
+@media only screen and (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+}
+
+/* Tablett portrait */
+@media only screen and (min-width: 768px) and (max-width: 1024px) and (orientation: portrait) {
+}
+
+/* Desktops and laptops */
+@media only screen and (min-width: 1224px) {
+}
+
+/* Large screens */
+@media only screen and (min-width: 1824px) {
+}

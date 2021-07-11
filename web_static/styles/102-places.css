@@ -1,0 +1,412 @@
+.places {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  vertical-align: middle;
+  justify-content: center;
+  width: 100%;
+  max-width: 100%;
+}
+
+.places h1 {
+  flex: 1 1 100%;
+  font-size: 30px;
+  text-align: left;
+  margin: 40px 0 5px 25px;
+}
+
+.places article {
+  display: flex;
+  flex-direction: column;
+  flex: 0 1 390px;
+  position: relative;
+  width: 390px;
+  border: 1px solid #ff5a5f;
+  border-radius: 4px;
+  padding: 20px;
+  margin: 20px;
+  height: auto;
+}
+
+.places article h2 {
+  text-align: center;
+  font-size: 30px;
+  margin-top: 0px;
+  margin-bottom: 20px;
+}
+
+.places article .price_by_night {
+  color: #ff5a5f;
+  border: 4px solid #ff5a5f;
+  min-width: 60px;
+  height: 60px;
+  font-size: 28px;
+  border-radius: 45px;
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  text-align: center;
+  line-height: 65px;
+  padding-left: 2px;
+  padding-right: 2px;
+}
+
+.places article .information {
+  margin-top: 10px;
+  border-top: 1px solid #dddddd;
+  border-bottom: 1px solid #dddddd;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.places article .information > div {
+  flex-basis: 23%;
+}
+
+.places article .information > div.max_guest > footer:after {
+  content: " Guests";
+}
+
+.places article .information > div.number_rooms > footer:after {
+  content: " Bedrooms";
+}
+
+.places article .information > div.number_bathrooms > footer:after {
+  content: " Bathrooms";
+}
+
+.places article .user {
+  margin-top: 20px;
+}
+
+.places article .user:before {
+  content: "Owner: ";
+  font-weight: bold;
+}
+
+.places article .description {
+  margin-top: 7px;
+}
+
+.places article .amenities ul {
+  list-style-type: none;
+}
+
+.places article .amenities ul img {
+  width: 30px;
+  float: left;
+  margin-right: 10px;
+}
+
+.places article .amenities ul li {
+  line-height: 32px;
+}
+
+.places article .amenities > ul > li > h4 {
+  margin: 0;
+}
+
+.places article div h2 {
+  font-size: 16px;
+  text-align: left;
+  padding-bottom: 5px;
+  margin-bottom: 30px;
+  border-bottom: 1px solid #dddddd;
+}
+
+.places article div.reviews ul {
+  list-style-type: none;
+  margin-bottom: 20px;
+}
+
+.places article div.reviews ul li {
+  padding-bottom: 10px;
+}
+
+.places article div.reviews ul > li > h3 {
+  font-weight: bold;
+  font-size: 14px;
+  margin-top: 10px;
+  margin-bottom: 3px;
+}
+
+.places article div.reviews ul > li > p {
+  margin-top: 3px;
+  font-size: 12px;
+}
+
+.places article div.amenities,
+.places article div.reviews {
+  margin-top: 40px;
+}
+
+/* Smartphones portrait and landscapes */
+@media only screen and (min-width: 320px) and (max-width: 812px) {
+  .places h1 {
+    display: none;
+  }
+
+  .places article {
+    flex: 0 1 100%;
+    width: 100%;
+  }
+
+  .places article h2 {
+    font-size: 2.1em;
+    line-height: 2em;
+    margin-top: 0px;
+    margin-bottom: 100px;
+    text-align: left;
+  }
+
+  .places article div h2 {
+    font-size: 0.9em;
+  }
+
+  .places article .price_by_night {
+    top: -15px;
+    right: -10px;
+    background-color: white;
+    transform: rotate(15deg);
+  }
+
+  .places article .information {
+    position: absolute;
+    top: 60px;
+    left: 0px;
+    border: none;
+    width: 100%;
+  }
+
+  .places article .information > div {
+    position: relative;
+    padding: 0 10px;
+  }
+
+  .places article .information > div img {
+    width: 50px;
+  }
+
+  .places article .information > div footer {
+    position: absolute;
+    bottom: -5px;
+    right: 4px;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    background-color: #ff5a5f;
+    line-height: 35px;
+    text-align: center;
+    color: black;
+    font-weight: bold;
+    font-size: 0.8em;
+  }
+
+  .places article .information > div.max_guest > footer::after,
+  .places article .information > div.number_rooms > footer::after,
+  .places article .information > div.number_bathrooms > footer::after {
+    content: " ";
+  }
+
+  .places article div.amenities,
+  .places article div.reviews {
+    margin-top: 0px;
+  }
+
+  .places article .amenities h2 {
+    display: none;
+  }
+
+  .places article .amenities ul {
+    position: absolute;
+    top: 130px;
+    left: 0px;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    padding-left: 0px;
+    justify-content: center;
+  }
+
+  .places article .amenities > ul > li img {
+    width: 50px;
+  }
+
+  .places article .amenities > ul > li > h4 {
+    display: none;
+  }
+
+  .places article .reviews h2 {
+    display: none;
+  }
+
+  .places article .reviews ul {
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    padding: 0px;
+    flex-wrap: wrap;
+  }
+
+  .places article .reviews ul li {
+    flex-basis: 100%;
+  }
+
+  .places article div.reviews ul > li > h3 {
+    font-size: 1em;
+  }
+
+  .places article div.reviews ul > li > p {
+    font-size: 1em;
+  }
+}
+
+/* Smartphones landscapes */
+@media only screen and (min-width: 321px) and (max-width: 567px) {
+}
+
+/* Smartphones portrait */
+@media only screen and (max-width: 768px) {
+}
+
+/* Tablett portrait and landscapes */
+@media only screen and (min-width: 768px) and (max-width: 1024px) {
+  .places h1 {
+    display: none;
+  }
+
+  .places article h2 {
+    margin-bottom: 140px;
+  }
+
+  .places article .information {
+    width: 50%;
+  }
+
+  .places article .amenities ul {
+    width: 50%;
+    top: 60px;
+    left: 50%;
+    justify-content: left;
+  }
+
+  .places article .amenities ul li {
+    flex-basis: 100px;
+    text-align: center;
+  }
+
+  .places article div.amenities,
+  .places article div.reviews {
+    margin-top: 0px;
+  }
+
+  .places article .reviews ul {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    padding: 0px;
+    flex-wrap: wrap;
+  }
+
+  .places article .reviews ul {
+    flex-wrap: nowrap;
+  }
+
+  .places article .reviews ul li {
+    flex-basis: 48%;
+    padding: 0 5px 10px;
+  }
+
+  .places article div.reviews ul > li > h3 {
+    font-size: 0.8em;
+  }
+
+  .places article div.reviews ul > li > p {
+    font-size: 0.7em;
+  }
+
+  .places article .information > div {
+    position: relative;
+    padding: 0 10px;
+  }
+
+  .places article .reviews h2 {
+    display: none;
+  }
+
+  .places article .information > div footer {
+    position: absolute;
+    bottom: -5px;
+    right: 42px;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    background-color: #ff5a5f;
+    line-height: 35px;
+    text-align: center;
+    color: black;
+    font-weight: bold;
+    font-size: 0.8em;
+  }
+
+  .places article .information {
+    position: absolute;
+    top: 60px;
+    left: 0px;
+    border: none;
+    width: 100%;
+  }
+
+  .places article .amenities h2 {
+    display: none;
+  }
+
+  .places article .amenities ul {
+    position: absolute;
+    top: 130px;
+    left: 0px;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    padding-left: 0px;
+    justify-content: center;
+  }
+
+  .places article .amenities > ul > li > h4 {
+    display: none;
+  }
+
+  .places article .information > div.max_guest > footer::after,
+  .places article .information > div.number_rooms > footer::after,
+  .places article .information > div.number_bathrooms > footer::after {
+    content: " ";
+  }
+
+  .places article .amenities ul img {
+    width: auto;
+    float: none;
+    margin-right: auto;
+  }
+}
+
+/* Tablett landscapes */
+@media only screen and (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+}
+
+/* Tablett portrait */
+@media only screen and (min-width: 768px) and (max-width: 1024px) and (orientation: portrait) {
+}
+
+/* Desktops and laptops */
+@media only screen and (min-width: 1224px) {
+}
+
+/* Large screens */
+@media only screen and (min-width: 1824px) {
+}

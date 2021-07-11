@@ -1,0 +1,82 @@
+section.places {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: center;
+  margin: 20px;
+}
+
+section.places h1 {
+  flex-basis: 100%;
+  font-size: 30px;
+  text-align: left;
+  margin-bottom: 0px;
+}
+
+section.places article {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  width: 390px;
+  border: 1px solid #ff5a5f;
+  border-radius: 4px;
+  padding: 20px;
+  margin: 20px;
+  height: auto;
+}
+
+.places article h2 {
+  text-align: center;
+  font-size: 30px;
+  margin-top: 0px;
+  margin-bottom: 21px;
+}
+
+section.places article .price_by_night {
+  color: #ff5a5f;
+  border: 4px solid #ff5a5f;
+  min-width: 60px;
+  height: 60px;
+  font-size: 28px;
+  border-radius: 45px;
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  text-align: center;
+  line-height: 65px;
+}
+
+section.places article .information {
+  margin-top: 10px;
+  border-top: 1px solid #dddddd;
+  border-bottom: 1px solid #dddddd;
+  list-style: none;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.places article .information > div {
+  flex-basis: 100px;
+  text-align: center;
+}
+
+section.places article .user {
+  margin-top: 20px;
+}
+
+section.places article .user:before {
+  content: "Owner:";
+  font-weight: bold;
+}
+
+section.places article .description {
+  margin-top: 7px;
+}
+
+body > footer {
+  position: relative;
+}

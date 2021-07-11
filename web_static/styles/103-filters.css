@@ -1,0 +1,191 @@
+.filters {
+  display: flex;
+  flex-direction: row;
+  background-color: white;
+  height: 70px;
+  width: 100%;
+  border: 1px solid #dddddd;
+  border-radius: 4px;
+}
+
+.filters div {
+  float: left;
+  height: 100%;
+  width: 30%;
+}
+
+.filters div:nth-child(1) {
+  border-right: 1px solid #dddddd;
+}
+
+.filters div h3,
+.filters div h4 {
+  margin-left: 25%;
+}
+
+.filters div h3 {
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+
+.filters div h4 {
+  font-weight: 400;
+  font-size: 14px;
+  margin-top: 3px;
+}
+
+.filters ul {
+  list-style: none;
+  padding-bottom: 10px;
+}
+
+.filters ul.popover li {
+  line-height: 1.7em;
+}
+
+.filters ul.popover > li > h2 {
+  margin-bottom: 1px;
+}
+
+.filters ul.popover {
+  position: relative;
+  display: none;
+  background-color: #fafafa;
+  border: 1px solid #dddddd;
+  border-radius: 4px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  margin-top: -5px;
+  z-index: 1;
+}
+
+.filters div:hover ul.popover {
+  display: block;
+}
+
+.filters ul h2 {
+  font-size: 16px;
+}
+
+.filters button {
+  position: absolute;
+  font-size: 18px;
+  background-color: #ff5a5f;
+  color: black;
+  height: 48px;
+  width: 20%;
+  border: none;
+  border-radius: 4px;
+  top: 11px;
+  right: 30px;
+}
+
+.filters button:hover {
+  opacity: 90%;
+}
+
+/* Smartphones portrait and landscapes */
+@media only screen and (min-width: 320px) and (max-width: 812px) {
+  .filters {
+    height: 110px;
+    position: relative;
+  }
+
+  .filters div h3 {
+    font-size: 0.9em;
+    margin-top: 20px;
+  }
+
+  .filters div h4 {
+    font-size: 0.8em;
+    margin-bottom: 20px;
+  }
+
+  .filters div h3,
+  .filters div h4 {
+    margin-left: 15%;
+  }
+
+  .filters button {
+    position: absolute;
+    font-size: 0.9em;
+    height: 100%;
+    width: 20%;
+    top: 0;
+    right: 0;
+    border-radius: 0px;
+  }
+}
+
+/* Smartphones portrait and landscapes */
+@media only screen and (min-width: 737px) and (max-width: 812px) {
+  .filters div h3 {
+    font-size: 1.5em;
+  }
+
+  .filters div h4 {
+    font-size: 1.4em;
+    margin-bottom: 20px;
+  }
+
+  .filters button {
+    font-size: 1.5em;
+  }
+}
+
+/* Smartphones landscapes */
+@media only screen and (min-width: 321px) and (max-width: 567px) {
+}
+
+/* Smartphones portrait */
+@media only screen and (max-width: 768px) {
+}
+
+/* Tablett portrait and landscapes */
+@media only screen and (min-width: 768px) and (max-width: 1024px) {
+  .filters {
+    height: 90px;
+    position: relative;
+  }
+
+  .filters div h3 {
+    font-size: 1.3em;
+    margin-top: 20px;
+  }
+
+  .filters div h4 {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+  }
+
+  .filters div h3,
+  .filters div h4 {
+    margin-left: 15%;
+  }
+
+  .filters button {
+    position: absolute;
+    font-size: 1.4em;
+    height: 100%;
+    width: 20%;
+    top: 0;
+    right: 0;
+    border-radius: 0px;
+  }
+}
+
+/* Tablett landscapes */
+@media only screen and (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+}
+
+/* Tablett portrait */
+@media only screen and (min-width: 768px) and (max-width: 1024px) and (orientation: portrait) {
+}
+
+/* Desktops and laptops */
+@media only screen and (min-width: 1224px) {
+}
+
+/* Large screens */
+@media only screen and (min-width: 1824px) {
+}
